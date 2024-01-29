@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+	</script>
+
+</head>
+<body>
+	
+
+
+	<form onsubmit="handleFormSubmit(event)">
+
+		<label for="expenseamount">Choose for expenseamlount</label>
+		<select name="expenseamount" id="expenseamount">
+
+			<option value="200">200</option>
+			<option value="300">300</option>
+			<option value="400">400</option>
+		</select>
+		<label for="description">Choose Description</label>
+		<input type="text" name="description" id="description">
+
+		<label for="category">Choose category</label>
+		<select name="category" id="category">
+			<option value="clothes">clothes</option>
+			<option value="electronics">Electronics</option>
+			<option value="food">food</option>
+		</select>
+
+		<input class="btn btn-primary" type="submit" value="Submit">
+
+
+	</form>
+
+	<ul id="expenselist"></ul>
+
+
+</body>
+		<script >
+
+				function handleFormSubmit(event){
+					event.preventDefault();
+
+
+
+					const description=event.target.elements.description.value;
+					console.log(description)
+					const expenseamount=event.target.elements.expenseamount.value;
+					console.log(expenseamount);
+
+					const category=event.target.elements.category.value;
+					console.log(category)
+
+
+
+
+					const details={
+						description:description,
+						expenseamount:expenseamount,
+						category:category,
+					}
+
+					 const saveDetails=JSON.parse(localStorage.getItem("saveDetails"))||[];
+					//const saveDetails=[];
+					saveDetails.push(details);
+
+					localStorage.setItem("saveDetails",JSON.stringify(saveDetails));
+					displaydetail(saveDetails);
+					
+				}
+
+				function displaydetail(saveDetails){
+
+						const expenselist=document.getElementById("expenselist");
+						expenselist.innerHTML="";
+
+						saveDetails.forEach((details)=>{
+
+						
+						const listItem=document.createElement("li");
+						listItem.textContent = `${details.description} ${details.expenseamount} ${details.category}`;
+
+						
+						const deletebtn=document.createElement('input');
+						deletebtn.type='button';
+						deletebtn.value='Delete';
+	
+	
+	
+						const editbtn=document.createElement('input');
+						editbtn.type='button';
+						editbtn.value='Edit';
+	
+						// Remove only the current item from localStorage
+						// const updatedDetails = saveDetails.filter(item => item !== details);
+
+						
+						
+						deletebtn.onclick=()=>{
+							// Remove the specific item from localStorage
+							const updatedDetails = saveDetails.filter(item => item !== details);
+							console.log(updatedDetails);
+							localStorage.setItem('saveDetails', JSON.stringify(updatedDetails));
+							//localStorage.removeItem('saveDetails');
+							expenselist.removeChild(listItem);
+						}
+						
+						editbtn.onclick=()=>{
+							document.getElementById("expenseamount").value = details.expenseamount;
+							document.getElementById("description").value = details.description;
+							document.getElementById("category").value = details.category;
+							const updatedDetails = saveDetails.filter(item => item !== details);
+							console.log(updatedDetails);
+							localStorage.setItem('saveDetails', JSON.stringify(updatedDetails));
+												expenselist.removeChild(listItem);
+													
+													
+												}
+												listItem.appendChild(deletebtn);
+												listItem.appendChild(editbtn);
+												expenselist.appendChild(listItem);
+
+				})
+			}
+					
+					
+
+				window.onload = function(){
+						displaydetail(JSON.parse(localStorage.getItem("saveDetails")) ||[]);
+
+			}
+
+
+	</script>
+</html>
